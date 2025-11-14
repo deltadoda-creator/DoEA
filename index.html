@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoEA Database Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        body { background: #0a0a0a; color: #00ff00; min-height: 100vh; padding: 20px; }
+        
+        .main-menu, .portal-section { 
+            background: rgba(0,15,0,0.9); 
+            border: 2px solid #00ff00; 
+            padding: 2rem; 
+            margin-bottom: 2rem; 
+        }
+        
+        .menu-options { display: flex; flex-direction: column; gap: 1rem; }
+        .menu-option { 
+            border: 2px solid #00ff00; 
+            padding: 1.5rem; 
+            cursor: pointer; 
+            background: transparent;
+            color: #00ff00;
+        }
+        .menu-option:hover { background: rgba(0,255,0,0.1); }
+        
+        .portal-section { display: none; }
+        .portal-section.active { display: block; }
+        
+        .portal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 1.5rem; 
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .back-btn { 
+            background: transparent; 
+            color: #00ff00; 
+            border: 2px solid #00ff00; 
+            padding: 0.5rem 1rem; 
+            cursor: pointer; 
+        }
+        .back-btn:hover { background: #00ff00; color: #000; }
+        
+        .database-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 1rem 0; 
+            border: 1px solid #00ff00; 
+        }
+        .database-table th, .database-table td { 
+            padding: 1rem; 
+            border-bottom: 1px solid #003300; 
+            text-align: left; 
+        }
+        .database-table th { background: rgba(0,30,0,0.9); }
+        
+        .access-panel { 
+            background: rgba(0,30,0,0.9); 
+            border: 2px solid #00ff00; 
+            padding: 1.5rem; 
+            margin-top: 1rem; 
+        }
+        
+        .access-input { 
+            background: #001100; 
+            border: 2px solid #00ff00; 
+            padding: 0.5rem; 
+            color: #00ff00; 
+            width: 100%; 
+            margin: 0.5rem 0; 
+        }
+        
+        .access-btn-panel { 
+            background: transparent; 
+            color: #00ff00; 
+            border: 2px solid #00ff00; 
+            padding: 0.5rem 1rem; 
+            cursor: pointer; 
+            margin: 0.5rem 0; 
+        }
+        .access-btn-panel:hover { background: #00ff00; color: #000; }
+        
+        .admin-panel { 
+            display: none; 
+            background: rgba(0,30,0,0.95); 
+            border: 2px solid #00ff00; 
+            padding: 1.5rem; 
+            margin-top: 1rem; 
+        }
+        
+        .admin-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-input, .form-select { 
+            background: #001100; 
+            border: 1px solid #00ff00; 
+            padding: 0.5rem; 
+            color: #00ff00; 
+            margin: 0.25rem 0; 
+        }
+        
+        .admin-actions { 
+            grid-column: span 2; 
+            display: flex; 
+            gap: 0.5rem; 
+            margin-top: 1rem; 
+        }
+        .admin-action-btn { 
+            background: transparent; 
+            color: #00ff00; 
+            border: 1px solid #00ff00; 
+            padding: 0.5rem; 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        .admin-action-btn:hover { background: #00ff00; color: #000; }
+        
+        .status-friendly { color: #00ff00; font-weight: bold; }
+        .status-neutral { color: #ffff00; font-weight: bold; }
+        .status-hostile { color: #ff0000; font-weight: bold; }
+        
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+    </style>
+</head>
+<body>
+    <!-- Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <h1>DoEA DATABASE PORTAL</h1>
+        <div class="menu-options">
+            <div class="menu-option" onclick="showSection('information')">
+                <h2>INFORMATION</h2>
+                <p>Learn about the Department of External Affairs</p>
+            </div>
+            <div class="menu-option" onclick="showSection('database')">
+                <h2>DATABASE</h2>
+                <p>Access the complete database of Groups of Interest</p>
+            </div>
+            <div class="menu-option" onclick="showSection('operations')">
+                <h2>OPERATIONS</h2>
+                <p>Restricted access portal for ongoing operations</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Portal -->
+    <div class="portal-section" id="information">
+        <div class="portal-header">
+            <button class="back-btn" onclick="showMainMenu()">← BACK TO MENU</button>
+            <h1>DEPARTMENT OF EXTERNAL AFFAIRS</h1>
+        </div>
+        <div class="portal-content">
+            <p>The DEA is responsible for a wide spectrum of operations: planting disinformation, eliminating traces of SCP activity, D-class personnel enlistment, and recruiting new employees.</p>
+        </div>
+    </div>
+
+    <!-- Database Portal -->
+    <div class="portal-section" id="database">
+        <div class="portal-header">
+            <button class="back-btn" onclick="showMainMenu()">← BACK TO MENU</button>
+            <h1>DoEA DATABASE</h1>
+        </div>
+        <div class="portal-content">
+            <table class="database-table">
+                <thead>
+                    <tr>
+                        <th>GOI ID</th>
+                        <th>NAME</th>
+                        <th>STATUS</th>
+                        <th>THREAT</th>
+                        <th>LAST CONTACT</th>
+                    </tr>
+                </thead>
+                <tbody id="databaseBody">
+                    <!-- Database entries will load here -->
+                </tbody>
+            </table>
+            
+            <div class="access-panel">
+                <h3>ADMIN PANEL ACCESS</h3>
+                <p>Enter admin code to modify database</p>
+                <input type="password" class="access-input" id="adminCode" placeholder="Enter admin access code">
+                <button class="access-btn-panel" onclick="checkAdminCode()">AUTHENTICATE</button>
+                <div id="adminMessage"></div>
+            </div>
+            
+            <div class="admin-panel" id="adminPanel">
+                <h3>DATABASE ADMINISTRATION</h3>
+                <div class="admin-form">
+                    <div class="form-group">
+                        <label>GOI ID</label>
+                        <input type="text" class="form-input" id="goiId" placeholder="GOI-XXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-input" id="goiName" placeholder="Organization Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-select" id="goiStatus">
+                            <option value="Friendly">Friendly</option>
+                            <option value="Neutral">Neutral</option>
+                            <option value="Hostile">Hostile</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Threat Level</label>
+                        <select class="form-select" id="goiThreat">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Extreme">Extreme</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Contact</label>
+                        <input type="text" class="form-input" id="goiContact" placeholder="YYYY-MM-DD">
+                    </div>
+                    <div class="admin-actions">
+                        <button class="admin-action-btn" onclick="addEntry()">ADD ENTRY</button>
+                        <button class="admin-action-btn" onclick="updateEntry()">UPDATE ENTRY</button>
+                        <button class="admin-action-btn" onclick="deleteEntry()">DELETE ENTRY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operation Portal -->
+    <div class="portal-section" id="operations">
+        <div class="portal-header">
+            <button class="back-btn" onclick="showMainMenu()">← BACK TO MENU</button>
+            <h1>OPERATION PORTAL</h1>
+        </div>
+        <div class="portal-content">
+            <p>Restricted access - authorized personnel only</p>
+            
+            <div class="access-panel">
+                <h3>OPERATION ACCESS</h3>
+                <p>Enter operation code to access classified information</p>
+                <input type="password" class="access-input" id="operationCode" placeholder="Enter operation access code">
+                <button class="access-btn-panel" onclick="checkOperationCode()">AUTHENTICATE</button>
+                <div id="operationMessage"></div>
+            </div>
+            
+            <div id="operationContent" style="display:none; margin-top:1rem;">
+                <div class="access-panel">
+                    <h3>OPERATION: SILENT WATCH</h3>
+                    <p><strong>Clearance Level:</strong> OMEGA</p>
+                    <p><strong>Current Status:</strong> ACTIVE</p>
+                    <p><strong>Objective:</strong> Monitor and contain potential XK-Class scenarios</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database
+        let database = [
+            { id: "GOI-001", name: "Serpent's Hand", status: "Neutral", threat: "Medium", contact: "2023-10-15" },
+            { id: "GOI-002", name: "Global Occult Coalition", status: "Friendly", threat: "Low", contact: "2023-11-02" },
+            { id: "GOI-003", name: "Chaos Insurgency", status: "Hostile", threat: "High", contact: "2023-09-28" }
+        ];
+
+        // Navigation Functions
+        function showMainMenu() {
+            document.getElementById('mainMenu').style.display = 'block';
+            hideAllSections();
+        }
+
+        function showSection(sectionId) {
+            document.getElementById('mainMenu').style.display = 'none';
+            hideAllSections();
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'database') {
+                updateDatabaseDisplay();
+            }
+        }
+
+        function hideAllSections() {
+            const sections = document.querySelectorAll('.portal-section');
+            sections.forEach(section => section.classList.remove('active'));
+        }
+
+        // Database Functions
+        function updateDatabaseDisplay() {
+            const databaseBody = document.getElementById('databaseBody');
+            databaseBody.innerHTML = '';
+            
+            database.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.id}</td>
+                    <td>${entry.name}</td>
+                    <td class="status-${entry.status.toLowerCase()}">${entry.status}</td>
+                    <td>${entry.threat}</td>
+                    <td>${entry.contact}</td>
+                `;
+                databaseBody.appendChild(row);
+            });
+        }
+
+        // Password Functions
+        function checkAdminCode() {
+            const code = document.getElementById('adminCode').value;
+            const message = document.getElementById('adminMessage');
+            
+            if (code === "KillerWontFindThis") {
+                message.innerHTML = '<span class="success">ACCESS GRANTED - Admin panel enabled</span>';
+                document.getElementById('adminPanel').style.display = 'block';
+            } else {
+                message.innerHTML = '<span class="error">INVALID ACCESS CODE</span>';
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        }
+
+        function checkOperationCode() {
+            const code = document.getElementById('operationCode').value;
+            const message = document.getElementById('operationMessage');
+            
+            if (code === "DoEAONTOP") {
+                message.innerHTML = '<span class="success">ACCESS GRANTED - Welcome, authorized personnel</span>';
+                document.getElementById('operationContent').style.display = 'block';
+            } else {
+                message.innerHTML = '<span class="error">INVALID ACCESS CODE - Attempt logged</span>';
+                document.getElementById('operationContent').style.display = 'none';
+            }
+        }
+
+        // Admin Panel Functions
+        function addEntry() {
+            const id = document.getElementById('goiId').value;
+            const name = document.getElementById('goiName').value;
+            const status = document.getElementById('goiStatus').value;
+            const threat = document.getElementById('goiThreat').value;
+            const contact = document.getElementById('goiContact').value;
+            
+            if (id && name && contact) {
+                database.push({ id, name, status, threat, contact });
+                updateDatabaseDisplay();
+                alert(`Entry ${id} added successfully`);
+                clearAdminForm();
+            } else {
+                alert('Please fill all required fields');
+            }
+        }
+
+        function updateEntry() {
+            const id = document.getElementById('goiId').value;
+            const index = database.findIndex(entry => entry.id === id);
+            
+            if (index !== -1) {
+                database[index] = {
+                    id,
+                    name: document.getElementById('goiName').value,
+                    status: document.getElementById('goiStatus').value,
+                    threat: document.getElementById('goiThreat').value,
+                    contact: document.getElementById('goiContact').value
+                };
+                updateDatabaseDisplay();
+                alert(`Entry ${id} updated successfully`);
+                clearAdminForm();
+            } else {
+                alert('Entry not found');
+            }
+        }
+
+        function deleteEntry() {
+            const id = document.getElementById('goiId').value;
+            const index = database.findIndex(entry => entry.id === id);
+            
+            if (index !== -1) {
+                if (confirm(`Are you sure you want to delete entry ${id}?`)) {
+                    database.splice(index, 1);
+                    updateDatabaseDisplay();
+                    alert(`Entry ${id} deleted successfully`);
+                    clearAdminForm();
+                }
+            } else {
+                alert('Entry not found');
+            }
+        }
+
+        function clearAdminForm() {
+            document.getElementById('goiId').value = '';
+            document.getElementById('goiName').value = '';
+            document.getElementById('goiContact').value = '';
+        }
+
+        // Initialize
+        updateDatabaseDisplay();
+    </script>
+</body>
+</html>
